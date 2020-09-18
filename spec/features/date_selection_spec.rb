@@ -18,9 +18,13 @@ RSpec.describe "date selection", type: :feature do
   context "no date period provided" do
     it "renders the correct date ranges in the time select" do
       visit page_uri
+
+      Capybara.ignore_hidden_elements = false
       time_labels = find(".app-c-time-select").all(".govuk-radios__item").map do |el|
         { el.find("label").text => el.find("span").text }
       end
+      Capybara.ignore_hidden_elements = true
+
       expect(time_labels).to match([
         { I18n.t("metrics.show.time_periods.past-30-days.leading") => "25 November 2018 to 24 December 2018" },
         { I18n.t("metrics.show.time_periods.last-month.leading") => "1 November 2018 to 30 November 2018" },
@@ -73,9 +77,11 @@ RSpec.describe "date selection", type: :feature do
   end
 
   def visit_page_and_filter_by_date_range(date_range)
+    Capybara.ignore_hidden_elements = false
     visit page_uri
     find("input[type=radio][name=date_range][value=#{date_range}]").click
     click_button "Change dates"
+    Capybara.ignore_hidden_elements = true
   end
 
   def expect_upviews_table_to_contain_dates(dates)
